@@ -203,10 +203,10 @@ const productImages: LanguageProductImages = {
         subtitle: "Votre Vision, Notre Savoir-Faire",
         email: "contact@ardelfakhar.com",
         phone: "+212 600 123 456",
-        address: "Médina de Fès, Maroc",
+        address: "Chichaoua, Maroc",
         orderNow: "Commander Maintenant",
         visitWorkshop: "Visitez Notre Atelier",
-        workshopLocation: "Médina de Fès, Maroc",
+        workshopLocation: "Chichaoua, Maroc",
       },
       footer: {
         description: "L'art authentique du Maroc, transmis avec passion",
@@ -389,44 +389,82 @@ const productImages: LanguageProductImages = {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                <AnimatedButton
+                <Button
                   variant="ghost"
                   size="sm"
                   className="md:hidden text-[#804F2A]"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </AnimatedButton>
+                </Button>
               </motion.div>
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <motion.nav 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden"
-            >
-              <div className="flex flex-col space-y-4 pt-6">
-                {Object.entries(currentContent.nav).map(([key, value]) => (
-                  <motion.a
-                    key={key}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 * parseInt(key) }}
-                    href={`#${key}`}
-                    className="text-[#804F2A] hover:text-[#804F2A]/70 transition-colors py-2 font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {value}
-                  </motion.a>
-                ))}
-              </div>
-            </motion.nav>
-          )}
+         {isMenuOpen && (
+  <>
+    {/* Overlay */}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 bg-black/50 z-40 md:hidden"
+      onClick={() => setIsMenuOpen(false)}
+    />
+    
+    {/* Sidebar Menu */}
+    <motion.nav
+      initial={{ 
+        x: language === "ar" ? "-100%" : "100%", // Slides from left for Arabic, right for French
+        opacity: 0 
+      }}
+      animate={{ 
+        x: 0, 
+        opacity: 1 
+      }}
+      exit={{ 
+        x: language === "ar" ? "-100%" : "100%", 
+        opacity: 0 
+      }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={`
+        fixed top-0 h-full w-64 z-50 bg-white shadow-xl
+        ${language === "ar" ? "left-0" : "right-0"} // Positions on correct side
+      `}
+    >
+      {/* Close button (positioned based on language) */}
+      <div className={`p-4 flex ${language === "ar" ? "justify-start" : "justify-end"}`}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-[#804F2A]"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <X className="w-5 h-5" />
+        </Button>
+      </div>
+      
+      {/* Menu items */}
+      <div className="flex flex-col space-y-2 px-6 py-4">
+        {Object.entries(currentContent.nav).map(([key, value]) => (
+          <motion.a
+            key={key}
+            initial={{ x: language === "ar" ? -20 : 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.1 * parseInt(key) }}
+            href={`#${key}`}
+            className="text-[#804F2A] hover:text-[#804F2A]/70 transition-colors py-3 px-4 font-medium rounded-lg hover:bg-[#804F2A]/5"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {value}
+          </motion.a>
+        ))}
+      </div>
+    </motion.nav>
+  </>
+)}
         </div>
       </header>
 
@@ -1016,7 +1054,7 @@ const productImages: LanguageProductImages = {
                       {product.name}
                     </motion.h3>
                     <p className="text-lg text-[#804F2A]/80 leading-relaxed mb-6">{product.description}</p>
-                    <div className="text-2xl font-bold text-[#804F2A] mb-6">{product.price}</div>
+                   
                   </div>
 
                   <motion.div
