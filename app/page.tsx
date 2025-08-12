@@ -148,7 +148,7 @@ const productImages: LanguageProductImages = {
         title: "Notre Histoire",
         subtitle: "Une Passion Transmise",
         description:
-          "Depuis trois générations, nous perpétuons l'art ancestral de la poterie marocaine. Chaque création est le fruit d'un savoir-faire unique, transmis de maître à apprenti dans les ateliers de Fès.",
+          "Depuis trois générations, nous perpétuons l'art ancestral de la poterie marocaine. Chaque création est le fruit d'un savoir-faire unique, transmis de maître à apprenti dans les ateliers de Chichaoua.",
         badge: "Notre Histoire",
         threeGenerations: "Trois Générations",
         ofKnowHow: "de Savoir-Faire",
@@ -402,9 +402,9 @@ const productImages: LanguageProductImages = {
           </div>
 
           {/* Mobile Navigation */}
-         {isMenuOpen && (
+      {isMenuOpen && (
   <>
-    {/* Overlay */}
+    {/* Overlay with smooth fade */}
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -414,10 +414,10 @@ const productImages: LanguageProductImages = {
       onClick={() => setIsMenuOpen(false)}
     />
     
-    {/* Sidebar Menu */}
+    {/* Sidebar Menu with smooth slide-out */}
     <motion.nav
       initial={{ 
-        x: language === "ar" ? "-100%" : "100%", // Slides from left for Arabic, right for French
+        x: language === "ar" ? "-100%" : "100%",
         opacity: 0 
       }}
       animate={{ 
@@ -425,35 +425,69 @@ const productImages: LanguageProductImages = {
         opacity: 1 
       }}
       exit={{ 
-        x: language === "ar" ? "-100%" : "100%", 
-        opacity: 0 
+        x: language === "ar" ? "-100%" : "100%",
+        opacity: 0,
+        transition: { duration: 0.3, ease: "easeInOut" } // Smoother exit
       }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      transition={{ 
+        duration: 0.3, 
+        ease: "easeOut",
+        when: "beforeChildren" // Animates parent before children
+      }}
       className={`
         fixed top-0 h-full w-64 z-50 bg-white shadow-xl
-        ${language === "ar" ? "left-0" : "right-0"} // Positions on correct side
+        ${language === "ar" ? "left-0" : "right-0"}
       `}
     >
-      {/* Close button (positioned based on language) */}
-      <div className={`p-4 flex ${language === "ar" ? "justify-start" : "justify-end"}`}>
+      {/* Close button with smooth interaction */}
+      <motion.div 
+        className={`p-4 flex ${language === "ar" ? "justify-start" : "justify-end"}`}
+        whileTap={{ scale: 0.9 }} // Subtle click effect
+      >
         <Button
           variant="ghost"
           size="sm"
-          className="text-[#804F2A]"
-          onClick={() => setIsMenuOpen(false)}
+          className="text-[#804F2A] hover:bg-[#804F2A]/10"
+          onClick={() => {
+            // Trigger the exit animation before closing
+            setIsMenuOpen(false);
+          }}
         >
           <X className="w-5 h-5" />
         </Button>
-      </div>
+      </motion.div>
       
-      {/* Menu items */}
-      <div className="flex flex-col space-y-2 px-6 py-4">
-        {Object.entries(currentContent.nav).map(([key, value]) => (
+      {/* Menu items with staggered animation */}
+      <motion.div
+        className="flex flex-col space-y-2 px-6 py-4"
+        variants={{
+          open: {
+            transition: { staggerChildren: 0.07, delayChildren: 0.2 }
+          },
+          closed: {
+            transition: { staggerChildren: 0.05, staggerDirection: -1 }
+          }
+        }}
+      >
+        {Object.entries(currentContent.nav).map(([key, value], index) => (
           <motion.a
             key={key}
-            initial={{ x: language === "ar" ? -20 : 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 * parseInt(key) }}
+            variants={{
+              open: {
+                x: 0,
+                opacity: 1,
+                transition: {
+                  x: { stiffness: 1000, velocity: -100 }
+                }
+              },
+              closed: {
+                x: language === "ar" ? -50 : 50,
+                opacity: 0,
+                transition: {
+                  x: { stiffness: 1000 }
+                }
+              }
+            }}
             href={`#${key}`}
             className="text-[#804F2A] hover:text-[#804F2A]/70 transition-colors py-3 px-4 font-medium rounded-lg hover:bg-[#804F2A]/5"
             onClick={() => setIsMenuOpen(false)}
@@ -461,7 +495,7 @@ const productImages: LanguageProductImages = {
             {value}
           </motion.a>
         ))}
-      </div>
+      </motion.div>
     </motion.nav>
   </>
 )}
